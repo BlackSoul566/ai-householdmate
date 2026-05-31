@@ -10,13 +10,32 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ShoppingRouteImport } from './routes/shopping'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as MealsRouteImport } from './routes/meals'
+import { Route as GoalsRouteImport } from './routes/goals'
 import { Route as ChoresRouteImport } from './routes/chores'
 import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as IndexRouteImport } from './routes/index'
 
 const ShoppingRoute = ShoppingRouteImport.update({
   id: '/shopping',
   path: '/shopping',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MealsRoute = MealsRouteImport.update({
+  id: '/meals',
+  path: '/meals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GoalsRoute = GoalsRouteImport.update({
+  id: '/goals',
+  path: '/goals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChoresRoute = ChoresRouteImport.update({
@@ -29,6 +48,11 @@ const CalendarRoute = CalendarRouteImport.update({
   path: '/calendar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AssistantRoute = AssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -37,35 +61,76 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
   '/calendar': typeof CalendarRoute
   '/chores': typeof ChoresRoute
+  '/goals': typeof GoalsRoute
+  '/meals': typeof MealsRoute
+  '/settings': typeof SettingsRoute
   '/shopping': typeof ShoppingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
   '/calendar': typeof CalendarRoute
   '/chores': typeof ChoresRoute
+  '/goals': typeof GoalsRoute
+  '/meals': typeof MealsRoute
+  '/settings': typeof SettingsRoute
   '/shopping': typeof ShoppingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
   '/calendar': typeof CalendarRoute
   '/chores': typeof ChoresRoute
+  '/goals': typeof GoalsRoute
+  '/meals': typeof MealsRoute
+  '/settings': typeof SettingsRoute
   '/shopping': typeof ShoppingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calendar' | '/chores' | '/shopping'
+  fullPaths:
+    | '/'
+    | '/assistant'
+    | '/calendar'
+    | '/chores'
+    | '/goals'
+    | '/meals'
+    | '/settings'
+    | '/shopping'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calendar' | '/chores' | '/shopping'
-  id: '__root__' | '/' | '/calendar' | '/chores' | '/shopping'
+  to:
+    | '/'
+    | '/assistant'
+    | '/calendar'
+    | '/chores'
+    | '/goals'
+    | '/meals'
+    | '/settings'
+    | '/shopping'
+  id:
+    | '__root__'
+    | '/'
+    | '/assistant'
+    | '/calendar'
+    | '/chores'
+    | '/goals'
+    | '/meals'
+    | '/settings'
+    | '/shopping'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AssistantRoute: typeof AssistantRoute
   CalendarRoute: typeof CalendarRoute
   ChoresRoute: typeof ChoresRoute
+  GoalsRoute: typeof GoalsRoute
+  MealsRoute: typeof MealsRoute
+  SettingsRoute: typeof SettingsRoute
   ShoppingRoute: typeof ShoppingRoute
 }
 
@@ -76,6 +141,27 @@ declare module '@tanstack/react-router' {
       path: '/shopping'
       fullPath: '/shopping'
       preLoaderRoute: typeof ShoppingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meals': {
+      id: '/meals'
+      path: '/meals'
+      fullPath: '/meals'
+      preLoaderRoute: typeof MealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/goals': {
+      id: '/goals'
+      path: '/goals'
+      fullPath: '/goals'
+      preLoaderRoute: typeof GoalsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chores': {
@@ -92,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalendarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/assistant': {
+      id: '/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AssistantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -104,8 +197,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AssistantRoute: AssistantRoute,
   CalendarRoute: CalendarRoute,
   ChoresRoute: ChoresRoute,
+  GoalsRoute: GoalsRoute,
+  MealsRoute: MealsRoute,
+  SettingsRoute: SettingsRoute,
   ShoppingRoute: ShoppingRoute,
 }
 export const routeTree = rootRouteImport
