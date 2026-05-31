@@ -27,7 +27,7 @@ export const Route = createFileRoute("/shopping")({
   component: ShoppingPage,
 });
 
-const CATEGORIES: ShoppingCategory[] = ["Produce", "Dairy", "Bakery", "Pantry", "Household"];
+const CATEGORIES: ShoppingCategory[] = ["Produce", "Dairy", "Bakery", "Pantry", "Household", "Meat", "Frozen"];
 
 const CATEGORY_COLOR: Record<ShoppingCategory, string> = {
   Produce: "bg-green-500",
@@ -35,6 +35,8 @@ const CATEGORY_COLOR: Record<ShoppingCategory, string> = {
   Bakery: "bg-amber-500",
   Pantry: "bg-rose-400",
   Household: "bg-sky-500",
+  Meat: "bg-red-500",
+  Frozen: "bg-cyan-400",
 };
 
 const AI_POOL = [
