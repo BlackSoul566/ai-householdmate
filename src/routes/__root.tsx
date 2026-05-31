@@ -96,6 +96,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "preconnect",
         href: "https://fonts.googleapis.com",
       },
+      { name: "twitter:title", content: "FamilyFlow AI — Your family, beautifully organized" },
+      { name: "description", content: "FamilyFlow AI is an AI-powered web app for organizing family life and boosting household productivity." },
+      { property: "og:description", content: "FamilyFlow AI is an AI-powered web app for organizing family life and boosting household productivity." },
+      { name: "twitter:description", content: "FamilyFlow AI is an AI-powered web app for organizing family life and boosting household productivity." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5f44333a-ac01-46ba-a22b-f8e8c714c8c3/id-preview-77d0286a--ee6a7075-ec81-4faa-b18e-bb1fe9f58d8b.lovable.app-1780239963859.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5f44333a-ac01-46ba-a22b-f8e8c714c8c3/id-preview-77d0286a--ee6a7075-ec81-4faa-b18e-bb1fe9f58d8b.lovable.app-1780239963859.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
