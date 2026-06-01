@@ -14,16 +14,535 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      chores: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          created_by: string
+          due_date: string | null
+          family_id: string
+          id: string
+          notes: string | null
+          points: number
+          recurrence: string | null
+          status: Database["public"]["Enums"]["chore_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          created_by: string
+          due_date?: string | null
+          family_id: string
+          id?: string
+          notes?: string | null
+          points?: number
+          recurrence?: string | null
+          status?: Database["public"]["Enums"]["chore_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          created_by?: string
+          due_date?: string | null
+          family_id?: string
+          id?: string
+          notes?: string | null
+          points?: number
+          recurrence?: string | null
+          status?: Database["public"]["Enums"]["chore_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chores_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chores_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          all_day: boolean
+          color: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          end_at: string | null
+          family_id: string
+          id: string
+          location: string | null
+          member_ids: string[]
+          start_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          all_day?: boolean
+          color?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_at?: string | null
+          family_id: string
+          id?: string
+          location?: string | null
+          member_ids?: string[]
+          start_at: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          all_day?: boolean
+          color?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_at?: string | null
+          family_id?: string
+          id?: string
+          location?: string | null
+          member_ids?: string[]
+          start_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      families: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      family_invites: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          family_id: string
+          id: string
+          invited_by: string
+          role: Database["public"]["Enums"]["family_role"]
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          family_id: string
+          id?: string
+          invited_by: string
+          role?: Database["public"]["Enums"]["family_role"]
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          family_id?: string
+          id?: string
+          invited_by?: string
+          role?: Database["public"]["Enums"]["family_role"]
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_invites_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_members: {
+        Row: {
+          color: string
+          created_at: string
+          family_id: string
+          id: string
+          initial: string
+          name: string
+          points: number
+          role: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          family_id: string
+          id?: string
+          initial?: string
+          name: string
+          points?: number
+          role?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          family_id?: string
+          id?: string
+          initial?: string
+          name?: string
+          points?: number
+          role?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_members_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goals: {
+        Row: {
+          created_at: string
+          created_by: string
+          current: number
+          emoji: string
+          family_id: string
+          id: string
+          kind: Database["public"]["Enums"]["goal_kind"]
+          last_logged_on: string | null
+          owner_id: string | null
+          streak: number
+          target: number
+          title: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          current?: number
+          emoji?: string
+          family_id: string
+          id?: string
+          kind?: Database["public"]["Enums"]["goal_kind"]
+          last_logged_on?: string | null
+          owner_id?: string | null
+          streak?: number
+          target: number
+          title: string
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          current?: number
+          emoji?: string
+          family_id?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["goal_kind"]
+          last_logged_on?: string | null
+          owner_id?: string | null
+          streak?: number
+          target?: number
+          title?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goals_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goals_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meals: {
+        Row: {
+          created_at: string
+          created_by: string
+          date: string
+          dietary_tags: string[]
+          family_id: string
+          id: string
+          ingredients: string[]
+          recipe: string | null
+          slot: Database["public"]["Enums"]["meal_slot"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          date: string
+          dietary_tags?: string[]
+          family_id: string
+          id?: string
+          ingredients?: string[]
+          recipe?: string | null
+          slot: Database["public"]["Enums"]["meal_slot"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          date?: string
+          dietary_tags?: string[]
+          family_id?: string
+          id?: string
+          ingredients?: string[]
+          recipe?: string | null
+          slot?: Database["public"]["Enums"]["meal_slot"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meals_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          family_id: string
+          id: string
+          kind: Database["public"]["Enums"]["notification_kind"]
+          link: string | null
+          read_at: string | null
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          family_id: string
+          id?: string
+          kind?: Database["public"]["Enums"]["notification_kind"]
+          link?: string | null
+          read_at?: string | null
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          family_id?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["notification_kind"]
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shopping_items: {
+        Row: {
+          added_by: string
+          ai_suggested: boolean
+          category: string
+          created_at: string
+          done: boolean
+          family_id: string
+          id: string
+          name: string
+          quantity: string | null
+          updated_at: string
+        }
+        Insert: {
+          added_by: string
+          ai_suggested?: boolean
+          category?: string
+          created_at?: string
+          done?: boolean
+          family_id: string
+          id?: string
+          name: string
+          quantity?: string | null
+          updated_at?: string
+        }
+        Update: {
+          added_by?: string
+          ai_suggested?: boolean
+          category?: string
+          created_at?: string
+          done?: boolean
+          family_id?: string
+          id?: string
+          name?: string
+          quantity?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_items_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_families: {
+        Row: {
+          created_at: string
+          family_id: string
+          role: Database["public"]["Enums"]["family_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          family_id: string
+          role?: Database["public"]["Enums"]["family_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          family_id?: string
+          role?: Database["public"]["Enums"]["family_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_families_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      current_family_id: { Args: { _user_id: string }; Returns: string }
+      family_role_of: {
+        Args: { _family_id: string; _user_id: string }
+        Returns: Database["public"]["Enums"]["family_role"]
+      }
+      has_family_access: {
+        Args: { _family_id: string; _user_id: string }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      chore_status: "pending" | "in_progress" | "done"
+      family_role: "owner" | "admin" | "member"
+      goal_kind: "family" | "individual"
+      meal_slot: "breakfast" | "lunch" | "dinner" | "snack"
+      notification_kind:
+        | "event"
+        | "chore"
+        | "shopping"
+        | "goal"
+        | "family"
+        | "system"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +669,20 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      chore_status: ["pending", "in_progress", "done"],
+      family_role: ["owner", "admin", "member"],
+      goal_kind: ["family", "individual"],
+      meal_slot: ["breakfast", "lunch", "dinner", "snack"],
+      notification_kind: [
+        "event",
+        "chore",
+        "shopping",
+        "goal",
+        "family",
+        "system",
+      ],
+    },
   },
 } as const
