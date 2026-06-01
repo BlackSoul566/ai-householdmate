@@ -1,84 +1,142 @@
-import { useEffect, useRef, useState } from "react";
-import { Bell, Calendar, ListChecks, ShoppingCart, Target, Check } from "lucide-react";
-import { INITIAL_NOTIFS, type Notification, type NotifKind } from "@/lib/family-data";
+import { useState } from "react";
+import { Bell, Check, Trash2, Calendar, ListChecks, ShoppingCart, Target, Info } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { notificationsQuery, type NotificationRow } from "@/lib/db/queries";
 import { cn } from "@/lib/utils";
+import { formatDistanceToNow } from "date-fns";
+import { toast } from "sonner";
 
-const ICONS: Record<NotifKind, typeof Bell> = {
+const ICONS = {
   event: Calendar,
   chore: ListChecks,
   shopping: ShoppingCart,
   goal: Target,
-};
+  family: Info,
+  system: Info,
+} as const;
 
-export function NotificationBell() {
-  const [items, setItems] = useState<Notification[]>(INITIAL_NOTIFS);
+export function NotificationBell({ familyId }: { familyId?: string }) {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const unread = items.filter((i) => i.unread).length;
+  const qc = useQueryClient();
+  const { data: notifs = [] } = useQuery({
+    ...notificationsQuery(familyId ?? ""),
+    enabled: !!familyId,
+  });
+  const unread = notifs.filter((n) => !n.read_at).length;
 
-  useEffect(() => {
-    const onClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
-  }, []);
+  const toggleRead = useMutation({
+    mutationFn: async (n: NotificationRow) => {
+      const { error } = await supabase
+        .from("notifications")
+        .update({ read_at: n.read_at ? null : new Date().toISOString() })
+        .eq("id", n.id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
+    onError: (e) => toast.error(e.message),
+  });
 
-  const markAll = () => setItems((s) => s.map((i) => ({ ...i, unread: false })));
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("notifications").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
+    onError: (e) => toast.error(e.message),
+  });
+
+  const markAll = useMutation({
+    mutationFn: async () => {
+      if (!familyId) return;
+      const { error } = await supabase
+        .from("notifications")
+        .update({ read_at: new Date().toISOString() })
+        .eq("family_id", familyId)
+        .is("read_at", null);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
+  });
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative">
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen((v) => !v)}
         className="relative grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
         aria-label="Notifications"
       >
         <Bell className="size-4" />
         {unread > 0 && (
-          <span className="absolute top-1 right-1 grid size-4 place-items-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+          <span className="absolute -top-0.5 -right-0.5 grid size-4 place-items-center rounded-full bg-destructive text-[9px] font-bold text-destructive-foreground">
             {unread}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-80 origin-top-right overflow-hidden rounded-2xl border border-border bg-surface shadow-brand">
-          <div className="flex items-center justify-between border-b border-border px-4 py-3">
-            <div className="text-sm font-semibold">Notifications</div>
-            <button
-              onClick={markAll}
-              className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:underline"
-            >
-              <Check className="size-3" /> Mark all read
-            </button>
-          </div>
-          <ul className="max-h-96 overflow-y-auto">
-            {items.map((n) => {
-              const Icon = ICONS[n.kind];
-              return (
-                <li
-                  key={n.id}
-                  className={cn(
-                    "flex items-start gap-3 border-b border-border px-4 py-3 last:border-0",
-                    n.unread && "bg-brand-soft/40",
-                  )}
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-2xl border border-border bg-surface p-2 shadow-lg">
+            <div className="flex items-center justify-between px-3 py-2">
+              <div className="text-sm font-semibold">Notifications</div>
+              {unread > 0 && (
+                <button
+                  onClick={() => markAll.mutate()}
+                  className="text-xs font-medium text-brand hover:underline"
                 >
-                  <div className="mt-0.5 grid size-8 place-items-center rounded-lg bg-brand-soft text-brand">
-                    <Icon className="size-4" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-semibold">{n.title}</div>
-                    <div className="text-xs text-muted-foreground">{n.body}</div>
-                    <div className="mt-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                      {n.time}
+                  Mark all read
+                </button>
+              )}
+            </div>
+            <div className="max-h-96 space-y-1 overflow-y-auto">
+              {notifs.length === 0 && (
+                <div className="px-3 py-8 text-center text-xs text-muted-foreground">
+                  No notifications yet
+                </div>
+              )}
+              {notifs.map((n) => {
+                const Icon = ICONS[n.kind] ?? Info;
+                return (
+                  <div
+                    key={n.id}
+                    className={cn(
+                      "group flex gap-2 rounded-xl p-3",
+                      !n.read_at && "bg-brand-soft/40",
+                    )}
+                  >
+                    <Icon className="size-4 shrink-0 text-brand mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium truncate">{n.title}</div>
+                      {n.body && (
+                        <div className="text-xs text-muted-foreground line-clamp-2">{n.body}</div>
+                      )}
+                      <div className="mt-1 text-[10px] text-muted-foreground">
+                        {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100">
+                      <button
+                        onClick={() => toggleRead.mutate(n)}
+                        className="text-muted-foreground hover:text-foreground"
+                        title={n.read_at ? "Mark unread" : "Mark read"}
+                      >
+                        <Check className="size-3.5" />
+                      </button>
+                      <button
+                        onClick={() => remove.mutate(n.id)}
+                        className="text-muted-foreground hover:text-destructive"
+                        title="Delete"
+                      >
+                        <Trash2 className="size-3.5" />
+                      </button>
                     </div>
                   </div>
-                  {n.unread && <span className="mt-1 size-2 shrink-0 rounded-full bg-brand" />}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+                );
+              })}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
