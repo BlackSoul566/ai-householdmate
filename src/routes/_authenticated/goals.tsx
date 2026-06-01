@@ -4,7 +4,7 @@ import { Target, Flame, Plus, Users, User } from "lucide-react";
 import { INITIAL_GOALS, memberByKey, type Goal } from "@/lib/family-data";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/goals")({
+export const Route = createFileRoute("/_authenticated/goals")({
   head: () => ({
     meta: [
       { title: "Goals & Habits — FamilyFlow AI" },

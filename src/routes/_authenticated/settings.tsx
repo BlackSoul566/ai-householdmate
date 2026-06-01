@@ -3,7 +3,7 @@ import { Moon, Sun, Bell, Users, Shield, Plus } from "lucide-react";
 import { FAMILY } from "@/lib/family-data";
 import { useTheme } from "@/lib/theme";
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
       { title: "Settings — FamilyFlow AI" },

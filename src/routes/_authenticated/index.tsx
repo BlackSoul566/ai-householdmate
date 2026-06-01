@@ -9,7 +9,7 @@ import {
 } from "@/lib/family-data";
 import familyImg from "@/assets/family-breakfast.jpg";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "Dashboard — FamilyFlow AI" },

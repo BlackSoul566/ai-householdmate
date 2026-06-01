@@ -1,4 +1,5 @@
-import { Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { type ReactNode } from "react";
 import {
   LayoutDashboard,
   Calendar,
@@ -10,11 +11,14 @@ import {
   Settings,
   Moon,
   Sun,
+  LogOut,
 } from "lucide-react";
-import { FAMILY } from "@/lib/family-data";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useTheme } from "@/lib/theme";
+import { useAuth } from "@/lib/auth";
+import { currentFamilyQuery, membersQuery } from "@/lib/db/queries";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -27,9 +31,15 @@ const NAV = [
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
-export function AppShell() {
+export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { theme, toggle } = useTheme();
+  const { signOut } = useAuth();
+  const { data: family } = useQuery(currentFamilyQuery);
+  const { data: members = [] } = useQuery({
+    ...membersQuery(family?.id ?? ""),
+    enabled: !!family?.id,
+  });
 
   return (
     <div className="min-h-screen bg-canvas text-foreground">
@@ -65,28 +75,36 @@ export function AppShell() {
           <div className="flex items-center gap-2">
             <button
               onClick={toggle}
+              suppressHydrationWarning
               className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </button>
-            <NotificationBell />
+            <NotificationBell familyId={family?.id} />
             <div className="hidden items-center gap-1 sm:flex">
-              {FAMILY.map((m) => (
+              {members.slice(0, 4).map((m) => (
                 <div
-                  key={m.key}
+                  key={m.id}
                   className="grid size-8 place-items-center rounded-full text-xs font-bold text-white ring-2 ring-surface"
-                  style={{ backgroundColor: m.colorVar }}
+                  style={{ backgroundColor: m.color }}
                   title={`${m.name} (${m.role})`}
                 >
                   {m.initial}
                 </div>
               ))}
             </div>
+            <button
+              onClick={() => signOut()}
+              className="grid size-9 place-items-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
+              aria-label="Sign out"
+              title="Sign out"
+            >
+              <LogOut className="size-4" />
+            </button>
           </div>
         </div>
 
-        {/* Compact nav (smaller screens) */}
         <div className="flex items-center gap-1 overflow-x-auto border-t border-border px-4 py-2 lg:hidden">
           {NAV.map((item) => {
             const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
@@ -108,9 +126,7 @@ export function AppShell() {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        <Outlet />
-      </main>
+      <main className="mx-auto max-w-7xl px-6 py-8">{children}</main>
     </div>
   );
 }

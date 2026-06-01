@@ -11,7 +11,8 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { AppShell } from "@/components/AppShell";
+import { AuthProvider } from "@/lib/auth";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -48,9 +49,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           This page didn't load
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
@@ -88,20 +87,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         property: "og:description",
         content:
-          "AI-powered family productivity: shared calendar, chores with points, and smart shopping lists.",
+          "AI-powered family productivity: shared calendar, chores with points, smart shopping & meal planning.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      {
-        rel: "preconnect",
-        href: "https://fonts.googleapis.com",
-      },
-      { name: "twitter:title", content: "FamilyFlow AI — Your family, beautifully organized" },
-      { name: "description", content: "FamilyFlow AI is an AI-powered web app for organizing family life and boosting household productivity." },
-      { property: "og:description", content: "FamilyFlow AI is an AI-powered web app for organizing family life and boosting household productivity." },
-      { name: "twitter:description", content: "FamilyFlow AI is an AI-powered web app for organizing family life and boosting household productivity." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5f44333a-ac01-46ba-a22b-f8e8c714c8c3/id-preview-77d0286a--ee6a7075-ec81-4faa-b18e-bb1fe9f58d8b.lovable.app-1780239963859.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5f44333a-ac01-46ba-a22b-f8e8c714c8c3/id-preview-77d0286a--ee6a7075-ec81-4faa-b18e-bb1fe9f58d8b.lovable.app-1780239963859.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -125,7 +114,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {children}
         <Scripts />
       </body>
@@ -138,7 +127,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppShell />
+      <AuthProvider>
+        <Outlet />
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

@@ -4,7 +4,7 @@ import { Trophy, Plus } from "lucide-react";
 import { FAMILY, INITIAL_CHORES, memberByKey, type Chore, type MemberKey } from "@/lib/family-data";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/chores")({
+export const Route = createFileRoute("/_authenticated/chores")({
   head: () => ({
     meta: [
       { title: "Chores — FamilyFlow AI" },

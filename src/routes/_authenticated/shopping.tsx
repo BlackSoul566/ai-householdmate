@@ -8,7 +8,7 @@ import {
 } from "@/lib/family-data";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/shopping")({
+export const Route = createFileRoute("/_authenticated/shopping")({
   head: () => ({
     meta: [
       { title: "Shopping List — FamilyFlow AI" },
