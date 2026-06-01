@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Sparkles, Send, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/assistant")({
+export const Route = createFileRoute("/_authenticated/assistant")({
   head: () => ({
     meta: [
       { title: "AI Assistant — FamilyFlow AI" },

@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { FAMILY, TODAY_SCHEDULE, memberByKey, type MemberKey } from "@/lib/family-data";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/calendar")({
+export const Route = createFileRoute("/_authenticated/calendar")({
   head: () => ({
     meta: [
       { title: "Family Calendar — FamilyFlow AI" },
