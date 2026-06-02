@@ -37,7 +37,8 @@ function DashboardPage() {
   }
 
   const memberById = (id: string | null) => members.find((m) => m.id === id);
-  const firstName = (user?.user_metadata?.full_name || user?.email?.split("@")[0] || "there").split(" ")[0];
+  const fullName = (user?.user_metadata as { full_name?: string } | undefined)?.full_name;
+  const firstName = (fullName || user?.email?.split("@")[0] || "there").split(" ")[0];
 
   const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
   const todayEnd = new Date(todayStart); todayEnd.setDate(todayEnd.getDate() + 1);
