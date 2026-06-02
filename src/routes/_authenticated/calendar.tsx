@@ -313,7 +313,7 @@ function EventPill({
 }: {
   event: EventRow;
   color: string;
-  member: FamilyMember | null;
+  member: FamilyMember | null | undefined;
   onDelete: () => void;
 }) {
   const d = new Date(event.start_at);
