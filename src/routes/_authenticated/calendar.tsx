@@ -211,7 +211,7 @@ function CalendarPage() {
                         </div>
                         <div className="space-y-1">
                           {dayEvents.slice(0, 3).map((e) => {
-                            const m = e.member_ids[0] ? memberById(e.member_ids[0]) : null;
+                            const m = (e.member_ids[0] ? memberById(e.member_ids[0]) : null) ?? null;
                             const color = m?.color ?? "var(--brand)";
                             return (
                               <EventPill key={e.id} event={e} color={color} member={m} onDelete={() => remove.mutate(e.id)} />
